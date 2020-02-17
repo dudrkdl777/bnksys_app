@@ -14,9 +14,8 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="11dp"
-                android:background="@drawable/myrect"
+                android:layout_height="200dp"
+                android:background="@drawable/write"
                 android:orientation="vertical"
                 android:padding="50dp">
 
@@ -26,6 +25,12 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_gravity="center"
+                    android:textColor="@color/colorText"
+                    android:textSize="40dp"
+                    android:shadowRadius="5.0"
+                    android:shadowDx="5.0"
+                    android:shadowDy="5.0"
+                    android:shadowColor="#000000"
                     android:text="Report 작성" />
 
                 <TextView
@@ -34,6 +39,11 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_gravity="center"
+                    android:textSize="15dp"
+                    android:shadowRadius="5.0"
+                    android:shadowDx="5.0"
+                    android:shadowDy="5.0"
+                    android:shadowColor="@color/colorText"
                     android:text="데이터를 활용하여 보고서를 작성해보세요" />
             </LinearLayout>
 
