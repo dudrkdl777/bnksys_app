@@ -9,9 +9,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Menu1Fragment"></activity>
-        <activity android:name=".ChartActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".HomeFragment"></activity>
+        <activity android:name=".ChartFragment" ></activity>
+        <activity android:name=".ReportFragment" ></activity>
+        <activity android:name=".WriteFragment" ></activity>
+        <activity android:name=".Tab1Fragment" ></activity>
+        <activity android:name=".Tab2Fragment" ></activity>
+        <activity android:name=".MainActivity" android:configChanges="orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
