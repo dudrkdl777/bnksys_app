@@ -35,7 +35,7 @@ public class WriteFragment extends Fragment {
 
     SQLiteDatabase db;
     ContentValues values;
-    String[] projection = { "rno", "ename", "dept","title","content" };
+   // String[] projection = { "rno", "ename", "dept","title","content" };
     Cursor cur;
 
     ArrayList<Report> reports = new ArrayList<>();
@@ -61,6 +61,7 @@ public class WriteFragment extends Fragment {
                     Log.d("test","onclick! 22222");
                     reports.add(new Report(ename.getText().toString(),dept.getText().toString(),title.getText().toString(),content.getText().toString()));
                     Log.d("test",reports.toString());
+                    mDBHelper = new MyDBHelper(getActivity());
                     db = mDBHelper.getWritableDatabase();
                     values = new ContentValues();
                     values.put("ename", ename.getText().toString());
@@ -70,32 +71,14 @@ public class WriteFragment extends Fragment {
                     Log.d("test","insert onclick!!!");
                     db.insert("report", null, values);
                     mDBHelper.close();
+                    Toast.makeText(context,"보고서가 등록되었습니다.",Toast.LENGTH_SHORT).show();
                 }else{
                     Log.d("test","onclick! failed!");
                     Toast.makeText(context,"정보를 올바르게 입력했는지 확인하세요.",Toast.LENGTH_SHORT).show();
                 }
             }
         });
-
         //db insert하기
         return view;
-    }
-}
-class MyDBHelper extends SQLiteOpenHelper {
-
-    public MyDBHelper(Context context) {
-        super(context, "report.db", null, 1);
-    }
-
-    @Override
-    public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE report(rno INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + "dept TEXT, ename TEXT, title TEXT, content TEXT);");
-    }
-
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS report;");
-        onCreate(db);
     }
 }
