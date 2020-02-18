@@ -23,11 +23,10 @@ public class ChartFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chart, container, false);
-
         mContext = getActivity().getApplicationContext();
         mTabLayout = view.findViewById(R.id.layout_tab);
 
-        mTabLayout.addTab(mTabLayout.newTab().setCustomView(createTabView("금융")));
+                mTabLayout.addTab(mTabLayout.newTab().setCustomView(createTabView("금융")));
         mTabLayout.addTab(mTabLayout.newTab().setCustomView(createTabView("신용")));
 
         mViewPager = (ViewPager) view.findViewById(R.id.pager_content);
