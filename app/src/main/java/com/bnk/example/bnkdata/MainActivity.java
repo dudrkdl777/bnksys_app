@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity {
@@ -18,11 +19,11 @@ public class MainActivity extends AppCompatActivity {
     private ReportFragment reportFragment = new ReportFragment();
     private WriteFragment writeFragment = new WriteFragment();
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_view);
         // 첫 화면 지정
@@ -40,7 +41,8 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     }
                     case R.id.navigation_menu2: {
-                        transaction.replace(R.id.frame_layout, chartFragment).commitAllowingStateLoss();
+                            transaction.replace(R.id.frame_layout, chartFragment).commitAllowingStateLoss();
+                            Log.d("test","mStackLevel up!!");
                         break;
                     }
                     case R.id.navigation_menu3: {

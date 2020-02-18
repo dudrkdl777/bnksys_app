@@ -7,7 +7,7 @@
 
     <item
         android:id="@+id/navigation_menu2"
-        android:icon="@android:drawable/ic_dialog_dialer"
+        android:icon="@drawable/ic_chart"
         android:title="CHART" />
 
     <item

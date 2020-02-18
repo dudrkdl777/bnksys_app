@@ -14,23 +14,35 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
-            <com.anychart.AnyChartView
-                android:id="@+id/any_chart_view"
+            <android.support.v7.widget.CardView
+                android:layout_marginTop="20dp"
                 android:layout_width="match_parent"
-                android:layout_height="245dp"
-                tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="226dp">
+                android:layout_height="match_parent" >
 
-            </com.anychart.AnyChartView>
+                <com.anychart.AnyChartView
+                    android:id="@+id/any_chart_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="245dp"
+                    tools:layout_editor_absoluteX="0dp"
+                    tools:layout_editor_absoluteY="226dp">
 
-            <com.anychart.AnyChartView
-                android:id="@+id/any_chart_view2"
+                </com.anychart.AnyChartView>
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:layout_marginTop="20dp"
                 android:layout_width="match_parent"
-                android:layout_height="245dp"
-                tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="226dp">
+                android:layout_height="match_parent" >
 
-            </com.anychart.AnyChartView>
+                <com.anychart.AnyChartView
+                    android:id="@+id/any_chart_view2"
+                    android:layout_width="match_parent"
+                    android:layout_height="245dp"
+                    tools:layout_editor_absoluteX="0dp"
+                    tools:layout_editor_absoluteY="226dp">
+
+                </com.anychart.AnyChartView>
+            </android.support.v7.widget.CardView>
 
         </LinearLayout>
     </ScrollView>
