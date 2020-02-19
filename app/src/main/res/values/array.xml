@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="months">
+        <item>2019-12-01</item>
+        <item>2019-09-01</item>
+        <item>2019-06-01</item>
+    </string-array>
+    <string-array name="ages">
+        <item>20</item>
+        <item>30</item>
+        <item>40</item>
+        <item>50</item>
+        <item>60</item>
+        <item>70</item>
+    </string-array>
+</resources>

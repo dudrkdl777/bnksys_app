@@ -67,16 +67,19 @@ public class DBManager {
                 case "DpsTypModel":
                     ArrayList<DpsTypModel> arr4 = new ArrayList<>();
                     List<DpsTypModel> lst4 = Arrays.asList(mapper.readValue(json, DpsTypModel[].class));
+                    arr4.add(new DpsTypModel()); //dpstyp의 id는 1번부터 시작하므로 더미 0번부터 추가
                     arr4.addAll(lst4);
                     return (ArrayList<T>)arr4;
                 case "CondstModel":
                     ArrayList<CondstModel> arr5 = new ArrayList<>();
                     List<CondstModel> lst5 = Arrays.asList(mapper.readValue(json, CondstModel[].class));
+                    arr5.add(new CondstModel()); //condst의 id는 1번부터 시작하므로 더미 0번부터 추가
                     arr5.addAll(lst5);
                     return (ArrayList<T>)arr5;
                 case "SectorModel":
                     ArrayList<SectorModel> arr6 = new ArrayList<>();
                     List<SectorModel> lst6 = Arrays.asList(mapper.readValue(json, SectorModel[].class));
+                    arr6.add(new SectorModel());//sector의 id는 1번부터 시작하므로 더미 0번부터 추가
                     arr6.addAll(lst6);
                     return (ArrayList<T>)arr6;
                 case "CltRgnModel":
