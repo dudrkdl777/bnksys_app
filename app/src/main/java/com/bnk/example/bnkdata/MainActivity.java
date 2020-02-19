@@ -63,18 +63,5 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-
-        /* DB읽기 샘플
-        try {
-            String body="", json="";
-            json = new HttpUtil().execute("http://192.168.219.127:8081/example/getDB?table=CrdStrModel",body).get();
-            ObjectMapper mapper = new ObjectMapper();
-            List<CrdStrModel> ppl2 = Arrays.asList(mapper.readValue(json, CrdStrModel[].class));
-            Log.d("test55",ppl2.get(2).getDt());
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        */
     }
 }
