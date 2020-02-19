@@ -1,5 +1,6 @@
 package com.bnk.example.bnkdata;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.widget.CursorAdapter;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -27,14 +29,14 @@ public class ReportFragment extends Fragment{
     Cursor cur;
     String[] projection = { "rno", "ename", "dept","title","content" };
     ReportAdapter reportAdapter;
+    ListView mList;
     ArrayList<Report> reportlist = new ArrayList<>();
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_report, container, false);
-        //db selectAll
-        //listView에 db 한 줄씩.........어케넣지?
         //섹션 클릭시 해당 id를 인텐트로 넘겨주기
+
         mDBHelper = new MyDBHelper(getActivity());
         db = mDBHelper.getReadableDatabase();
         cur = db.query("report", projection, null,
@@ -45,11 +47,29 @@ public class ReportFragment extends Fragment{
             db= mDBHelper.getWritableDatabase();
            reportAdapter = new ReportAdapter(getContext(),R.layout.list_item,reportlist);
             // 3. ListView 만들기 (선언, setAdapter)
-            ListView lv = (ListView)view.findViewById(R.id.list_view);
-            lv.setAdapter(reportAdapter);
+            mList = (ListView)view.findViewById(R.id.list_view);
+            mList.setAdapter(reportAdapter);
+
+            mList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    String _ename = reportAdapter.getItem(position).getEname();
+                    String _title= reportAdapter.getItem(position).getTitle();
+                    String _dept = reportAdapter.getItem(position).getDept();
+                    String _content = reportAdapter.getItem(position).getContent();
+
+                    Intent intent = new Intent(getContext(),DetailActivity.class);
+                    intent.putExtra("ename",_ename);
+                    intent.putExtra("title",_title);
+                    intent.putExtra("dept",_dept);
+                    intent.putExtra("content",_content);
+                    startActivity(intent);
+                }
+            });
             cur.close();
         }
         mDBHelper.close();
+
         return view;
     }
     private ArrayList<Report> makeList(Cursor cur) {//커서는 유효한 데이터 이전을 가리킨다.

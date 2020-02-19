@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import com.anychart.enums.Anchor;
 import com.anychart.enums.HoverMode;
 import com.anychart.enums.Position;
 import com.anychart.enums.TooltipPositionMode;
+import com.bnk.example.bnkdata.DB.DBManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +38,8 @@ public class Tab1Fragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_tab1, container, false);
+        //sectors에 무슨 데이터가 있는 지 확인하기
+        Log.d("chart!",DBManager.sectors.get(0).getNm()+"/"+DBManager.sectors.get(0).getId()+"/"+DBManager.sectors.get(1).getPid());
 
         ///pie 차트
         AnyChartView anyChartView =view.findViewById(R.id.any_chart_view);

@@ -52,6 +52,11 @@ public class WriteFragment extends Fragment {
         title = view.findViewById(R.id.title_in);
         content = view.findViewById(R.id.content_in);
 
+        ename.setText("");
+        dept.setText("");
+        title.setText("");
+        content.setText("");
+
         insbtn.setOnClickListener(new View.OnClickListener() {
 
             @Override
