@@ -12,15 +12,15 @@ import java.util.Arrays;
 import java.util.List;
 
 public class DBManager {
-    public static ArrayList<CltRgnModel> cltRgns;
-    public static ArrayList<CondstModel> condsts;
-    public static ArrayList<CrByAgeModel> crByAges;
-    public static ArrayList<CrByRgnModel> crByRgns;
-    public static ArrayList<CrdStrModel> crdStrs;
-    public static ArrayList<DepositModel> deposits;
-    public static ArrayList<DpsTermModel> dpsTerms;
-    public static ArrayList<DpsTypModel> dpsTyps;
-    public static ArrayList<SectorModel> sectors;
+    public static ArrayList<CltRgnModel> cltRgns; // 군/구별 신용거래 데이터
+    public static ArrayList<CondstModel> condsts; // 군/구 데이터
+    public static ArrayList<CrByAgeModel> crByAges; // 군/구 나이별 평균 신용
+    public static ArrayList<CrByRgnModel> crByRgns; // 군/구 우량 신용수
+    public static ArrayList<CrdStrModel> crdStrs; // 업종별 신용거래량
+    public static ArrayList<DepositModel> deposits; // 예금종류별 예금액
+    public static ArrayList<DpsTermModel> dpsTerms; // 예금 기간별 예금액
+    public static ArrayList<DpsTypModel> dpsTyps; // 예금 종류
+    public static ArrayList<SectorModel> sectors; // 업종 데이터
 
     private static DBManager singletonInstance = new DBManager();
 
@@ -44,53 +44,6 @@ public class DBManager {
     }
 
     public <T> ArrayList<T> getTable(String tablename) {
-        /*
-        Class typ;
-        switch(tablename){
-            case "CrdStrModel":
-                typ = CrdStrModel[].class;
-                break;
-            case "DepositModel":
-                typ = DepositModel[].class;
-                break;
-            case "DpsTermModel":
-                typ = DpsTermModel[].class;
-                break;
-            case "DpsTypModel":
-                typ = DpsTypModel[].class;
-                break;
-            case "CondstModel":
-                typ = CondstModel[].class;
-                break;
-            case "SectorModel":
-                typ = SectorModel[].class;
-                break;
-            case "CltRgnModel":
-                typ = CltRgnModel[].class;
-                break;
-            case "CrByAgeModel":
-                typ = CrByAgeModel[].class;
-                break;
-            case "CrByRgnModel":
-                typ = CrByRgnModel[].class;
-                break;
-            default:
-                Log.e("DB","Talbe Name not exist");
-                return null;
-        }
-        try {
-            String body="", json="";
-            json = new HttpUtil().execute("http://192.168.0.43:8081/example/getDB?table=" + tablename,body).get();
-            ObjectMapper mapper = new ObjectMapper();
-            ArrayList<T> arr = new ArrayList<>();
-            List<?> lst = Arrays.asList(mapper.readValue(json,typ));
-            arr.addAll((ArrayList<T>)lst);
-            return arr;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-        */
         try {
             String body = "", json = "";
             json = new HttpUtil().execute("http://192.168.0.43:8081/example/getDB?table=" + tablename, body).get();
