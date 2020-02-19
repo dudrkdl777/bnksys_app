@@ -30,12 +30,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        /*웹서버연결시작*/
         // DB매니저 초기화, 이후부터 스태틱 ArrayList 사용가능
         DBManager.getInstance().setStaticDB();
         Log.d("dbtest",DBManager.sectors.get(0).getNm());
         // DBManager.getInstance().sectors 와 같이 참조가능
-
+        /*웹서버 연결 끝*/
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_view);
         // 첫 화면 지정

@@ -1,24 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.bnk.example.bnkdata">
+
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
-        android:largeHeap="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".HomeFragment"></activity>
-        <activity android:name=".ChartFragment" ></activity>
-        <activity android:name=".ReportFragment" ></activity>
-        <activity android:name=".WriteFragment" ></activity>
-        <activity android:name=".Tab1Fragment" ></activity>
-        <activity android:name=".Tab2Fragment" ></activity>
-        <activity android:name=".MainActivity" android:configChanges="orientation|screenSize">
+        <activity android:name=".DetailActivity"></activity>
+        <activity android:name=".HomeFragment" />
+        <activity android:name=".ChartFragment" />
+        <activity android:name=".ReportFragment" />
+        <activity android:name=".WriteFragment" />
+        <activity android:name=".Tab1Fragment" />
+        <activity android:name=".Tab2Fragment" />
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

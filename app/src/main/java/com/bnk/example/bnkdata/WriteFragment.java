@@ -52,6 +52,11 @@ public class WriteFragment extends Fragment {
         title = view.findViewById(R.id.title_in);
         content = view.findViewById(R.id.content_in);
 
+        ename.setText("");
+        dept.setText("");
+        title.setText("");
+        content.setText("");
+
         insbtn.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -72,6 +77,10 @@ public class WriteFragment extends Fragment {
                     db.insert("report", null, values);
                     mDBHelper.close();
                     Toast.makeText(context,"보고서가 등록되었습니다.",Toast.LENGTH_SHORT).show();
+                    ename.setText("");
+                    dept.setText("");
+                    title.setText("");
+                    content.setText("");
                 }else{
                     Log.d("test","onclick! failed!");
                     Toast.makeText(context,"정보를 올바르게 입력했는지 확인하세요.",Toast.LENGTH_SHORT).show();
