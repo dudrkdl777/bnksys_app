@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 
+import com.bnk.example.bnkdata.DB.DBManager;
 import com.bnk.example.bnkdata.Model.CrdStrModel;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -29,6 +30,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // DB매니저 초기화, 이후부터 스태틱 ArrayList 사용가능
+        DBManager.getInstance().setStaticDB();
+        Log.d("dbtest",DBManager.sectors.get(0).getNm());
+        // DBManager.getInstance().sectors 와 같이 참조가능
 
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_view);
@@ -63,18 +69,5 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-
-        /* DB읽기 샘플
-        try {
-            String body="", json="";
-            json = new HttpUtil().execute("http://192.168.219.127:8081/example/getDB?table=CrdStrModel",body).get();
-            ObjectMapper mapper = new ObjectMapper();
-            List<CrdStrModel> ppl2 = Arrays.asList(mapper.readValue(json, CrdStrModel[].class));
-            Log.d("test55",ppl2.get(2).getDt());
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        */
     }
 }
