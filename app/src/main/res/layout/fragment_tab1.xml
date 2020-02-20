@@ -33,6 +33,18 @@
                 </com.anychart.AnyChartView>
 
             </android.support.v7.widget.CardView>
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp">
+
+                <com.anychart.AnyChartView
+                    android:id="@+id/any_chart_view2"
+                    android:layout_width="match_parent"
+                    android:layout_height="245dp">
+                </com.anychart.AnyChartView>
+
+            </android.support.v7.widget.CardView>
 
          <GridLayout
              android:rowCount="3"

@@ -13,14 +13,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".DetailActivity"></activity>
+        <activity android:name=".DetailChartActivity"></activity>
+        <activity android:name=".DetailActivity" />
         <activity android:name=".HomeFragment" />
         <activity android:name=".ChartFragment" />
         <activity android:name=".ReportFragment" />
         <activity android:name=".WriteFragment" />
         <activity android:name=".Tab1Fragment" />
         <activity android:name=".Tab2Fragment" />
-        <activity android:name=".ProgressDialogActivity"/>
+        <activity android:name=".ProgressDialogActivity" />
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|screenSize">

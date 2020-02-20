@@ -2,6 +2,8 @@ package com.bnk.example.bnkdata;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Credentials;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -36,6 +38,7 @@ import com.bnk.example.bnkdata.ChartLib.PieChart;
 import com.bnk.example.bnkdata.DB.DBManager;
 import com.bnk.example.bnkdata.Model.CrdStrModel;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -81,34 +84,47 @@ public class Tab1Fragment extends Fragment {
         Pie pie = test.makePie(cdr_list);
         anyChartView.setChart(pie);
 
-        //dialog_chartview
+       //월별 차트
+        List<CrdStrModel> crd_list2 = DBManager.crdStrs.stream().filter(t->t.getDt().contains("2019-11-01")).collect(Collectors.toList());
+
+        AnyChartView anyChartView3 =view.findViewById(R.id.any_chart_view2);
+        APIlib.getInstance().setActiveAnyChartView(anyChartView3);
+        BarChart bar = new BarChart();
+        Cartesian cart = bar.makeBar(crd_list2);
+        anyChartView3.setChart(cart);
+
 
         //TODO: 카드 클릭시 대화상자로 차트 그리기
         //합계버튼
         card1 =view.findViewById(R.id.cardView1);
+        ArrayList<CrdStrModel> arr_crdlist = new ArrayList<>();
 
         card1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(),"test",Toast.LENGTH_LONG).show();
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                LayoutInflater inflater2 = getLayoutInflater();
-                View dialog = inflater2.inflate(R.layout.view_fin1, container, false);
-                //chart그리기
-                AnyChartView anyChartView2 =view.findViewById(R.id.dialog_chartview);
-                APIlib.getInstance().setActiveAnyChartView(anyChartView2);
-                BarChart bar = new BarChart();
-                Cartesian cartesian = bar.makeBar();
-                anyChartView2.setChart(cartesian);
+//                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//                LayoutInflater inflater2 = getLayoutInflater();
+//                View dialog = inflater2.inflate(R.layout.view_fin1, container, false);
+//                //chart그리기
+//                AnyChartView anyChartView2 =view.findViewById(R.id.dialog_chartview);
+//                APIlib.getInstance().setActiveAnyChartView(anyChartView2);
+//                BarChart bar = new BarChart();
+//                Cartesian cart = bar.makeBar();
+//                anyChartView2.setChart(cart);
+//                //취소버튼 + dialog 나타내기
+//                builder.setNegativeButton(android.R.string.cancel,null);
+//                builder.setView(dialog);
+//                builder.create().show();
+                //신용거래량을 리스트로 만들어서 보내기...
+                List<CrdStrModel> crdlist = DBManager.crdStrs.stream().filter(t->t.getSector()==1).collect(Collectors.toList());
+                ArrayList<CrdStrModel> nlist = new ArrayList<>();
+                nlist.addAll(crdlist);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("list",nlist);
 
+                Intent intent = new Intent(getContext(),DetailChartActivity.class);
 
-                //anyChartView2.setChart(cartesian);
-
-                //취소버튼 + dialog 나타내기
-                builder.setNegativeButton(android.R.string.cancel,null);
-                builder.setView(dialog);
-                builder.create().show();
-
+                startActivity(intent);
             }
         });
 
