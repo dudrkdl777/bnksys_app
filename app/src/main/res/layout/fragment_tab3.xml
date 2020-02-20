@@ -52,7 +52,6 @@
                     android:id="@+id/map_item"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="map_item"
                     android:textAlignment="center"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -61,7 +60,6 @@
                     android:id="@+id/map_item_val"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="map_item_val"
                     android:textAlignment="center"
                     android:textSize="14sp"
                     android:textStyle="bold" />
