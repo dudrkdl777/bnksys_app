@@ -38,9 +38,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         /*웹서버연결시작*/
         // DB매니저 초기화, 이후부터 스태틱 ArrayList 사용가능
-        Intent intent = new Intent(MainActivity.this, ProgressDialogActivity.class);
-        startActivity( intent );
-        DBManager.getInstance().setStaticDB();
+        //DBManager.getInstance().setStaticDB();
         // DBManager.getInstance().sectors 와 같이 참조가능
         /*웹서버 연결 끝*/
 

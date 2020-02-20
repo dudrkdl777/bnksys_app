@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -22,11 +23,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.bnk.example.bnkdata.DB.DBManager;
+import com.bnk.example.bnkdata.Model.CltRgnModel;
 import com.bnk.example.bnkdata.Model.CrByAgeModel;
 import com.bnk.example.bnkdata.Model.CrByRgnModel;
 import com.bnk.example.bnkdata.Model.CrdStrModel;
 
 import java.lang.reflect.Array;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,6 +38,7 @@ import java.util.stream.Collectors;
 public class Tab2Fragment extends Fragment implements ImageView.OnTouchListener {
 
     ImageView[] map = new ImageView[17];
+    ImageView pin;
     int[] originColor = new int[17];
     String[] map_itemstr = new String[17], map_item_valstr = new String[17];
     int[] rscid = {R.drawable.m0, R.drawable.m1, R.drawable.m2, R.drawable.m3, R.drawable.m4, R.drawable.m5, R.drawable.m6, R.drawable.m7, R.drawable.m8, R.drawable.m9,
@@ -45,9 +49,10 @@ public class Tab2Fragment extends Fragment implements ImageView.OnTouchListener 
     String[] ctgstr; // CRBYAGE,CRBYRGN,CLTRGN
     String[] months, ages, rates;
 
-    TextView rateLabel, ageLabel, map_item, map_item_val,desc;
+    TextView rateLabel, ageLabel, map_item, map_item_val, desc;
 
     int previousSelectedMapIdx = -1; // 이전에 선택했던 지역의 선택효과 초기화를 위해 저장
+    int previousTouchMapIdx = -1; //이전에 선택한 지역(터치 누름->터치 뗀 맵이 다를 때 초기화 하기 위해 저장)
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,9 +66,9 @@ public class Tab2Fragment extends Fragment implements ImageView.OnTouchListener 
         rateLabel = view.findViewById(R.id.rateLabel);
         ageLabel = view.findViewById(R.id.ageLabel);
         desc = view.findViewById(R.id.description);
+        pin = view.findViewById(R.id.pin);
 
         age = view.findViewById(R.id.spinner_age);
-
         selRate = view.findViewById(R.id.spinner_selRate);
         category = view.findViewById(R.id.spinner_category);
         selMonth = view.findViewById(R.id.spinner);
@@ -83,11 +88,13 @@ public class Tab2Fragment extends Fragment implements ImageView.OnTouchListener 
         createSpinner(view);
         createMap(view);
         age.setSelection(1);
-        showSelectedMapInfo("군/구 별 " + age.getSelectedItem().toString() + "대 " + category.getSelectedItem().toString(),"데이터를 보고싶은 지역을 터치해주세요!");
+        showSelectedMapInfo("군/구 별 " + age.getSelectedItem().toString() + "대 " + category.getSelectedItem().toString(), "데이터를 보고싶은 지역을 터치해주세요!");
         return view;
     }
+
     private void setValue() {
         //CRBYAGE , 평균 신용등급
+        pin.setVisibility(View.GONE);
         if (category.getSelectedItemPosition() == 0) {
             CharSequence seldt = selMonth.getSelectedItem().toString();
             List<CrByAgeModel> list = DBManager.crByAges.stream().filter(t -> t.getDt().contains(seldt)).collect(Collectors.toList()); //선택된 달만 추출
@@ -96,11 +103,11 @@ public class Tab2Fragment extends Fragment implements ImageView.OnTouchListener 
             for (int i = 0; i < list.size(); i++) {
                 if (list.get(i).getAge() == Integer.parseInt(age.getSelectedItem().toString())) {
                     int conid = list.get(i).getCondst();
-                    int rate = Math.round((list.get(i).getAvgcr()-mincr) / (maxcr-mincr) * 255f);
+                    int rate = Math.round((list.get(i).getAvgcr() - mincr) / (maxcr - mincr) * 255f);
                     originColor[conid] = Color.argb(rate, 180, 44, 44);
                     map[conid].setColorFilter(originColor[conid]);
                     map_item_valstr[conid] = Float.toString(list.get(i).getAvgcr());
-                    map_itemstr[conid] = DBManager.condsts.get(conid).getNm() + " " + age.getSelectedItem().toString() + "대 " + category.getSelectedItem().toString() +" : " + map_item_valstr[conid];
+                    map_itemstr[conid] = DBManager.condsts.get(conid).getNm() + " " + age.getSelectedItem().toString() + "대 " + category.getSelectedItem().toString() + " : " + map_item_valstr[conid];
                 }
             }
             desc.setText(" ※ 신용등급 범위: 1~10등급 (1에 가까울수록 우량함)\n" +
@@ -110,24 +117,24 @@ public class Tab2Fragment extends Fragment implements ImageView.OnTouchListener 
         else if (category.getSelectedItemPosition() == 1) {
             CharSequence seldt = selMonth.getSelectedItem().toString();
             List<CrByRgnModel> list = DBManager.crByRgns.stream().filter(t -> t.getDt().contains(seldt)).collect(Collectors.toList());
-            int maxn = 0,minn = Integer.MAX_VALUE;
-            for(int i=0; i<list.size();i++){
-                switch(selRate.getSelectedItemPosition()){
+            int maxn = 0, minn = Integer.MAX_VALUE;
+            for (int i = 0; i < list.size(); i++) {
+                switch (selRate.getSelectedItemPosition()) {
                     case 0:
-                        maxn = Integer.max(maxn,DBManager.crByRgns.get(i).getRatesg());
-                        minn = Integer.min(minn,DBManager.crByRgns.get(i).getRatesg());
+                        maxn = Integer.max(maxn, DBManager.crByRgns.get(i).getRatesg());
+                        minn = Integer.min(minn, DBManager.crByRgns.get(i).getRatesg());
                         break;
                     case 1:
-                        maxn = Integer.max(maxn,DBManager.crByRgns.get(i).getRateg());
-                        minn = Integer.min(minn,DBManager.crByRgns.get(i).getRateg());
+                        maxn = Integer.max(maxn, DBManager.crByRgns.get(i).getRateg());
+                        minn = Integer.min(minn, DBManager.crByRgns.get(i).getRateg());
                         break;
                     case 2:
-                        maxn = Integer.max(maxn,DBManager.crByRgns.get(i).getRatebd());
-                        minn = Integer.min(minn,DBManager.crByRgns.get(i).getRatebd());
+                        maxn = Integer.max(maxn, DBManager.crByRgns.get(i).getRatebd());
+                        minn = Integer.min(minn, DBManager.crByRgns.get(i).getRatebd());
                         break;
                     case 3:
-                        maxn = Integer.max(maxn,DBManager.crByRgns.get(i).getRategbd());
-                        minn = Integer.min(minn,DBManager.crByRgns.get(i).getRategbd());
+                        maxn = Integer.max(maxn, DBManager.crByRgns.get(i).getRategbd());
+                        minn = Integer.min(minn, DBManager.crByRgns.get(i).getRategbd());
                         break;
                 }
             }
@@ -135,36 +142,36 @@ public class Tab2Fragment extends Fragment implements ImageView.OnTouchListener 
             for (int i = 0; i < list.size(); i++) {
                 int conid = list.get(i).getCondst();
                 int rate = 0;
-                if(maxn-minn == 0){
+                if (maxn - minn == 0) {
                     rate = 0;
                     map_item_valstr[conid] = Integer.toString(0);
                     originColor[conid] = Color.argb(0, 0, 0, 0);
-                }else {
+                } else {
                     switch (selRate.getSelectedItemPosition()) {
                         case 0:
-                            rate = Math.round((float)(list.get(i).getRatesg() - minn) / (maxn - minn) * 255f);
+                            rate = Math.round((float) (list.get(i).getRatesg() - minn) / (maxn - minn) * 255f);
                             map_item_valstr[conid] = Integer.toString(list.get(i).getRatesg());
                             originColor[conid] = Color.argb(rate, 44, 200, 44);
                             break;
                         case 1:
-                            rate = Math.round((float)(list.get(i).getRateg() - minn) / (maxn - minn) * 255f);
+                            rate = Math.round((float) (list.get(i).getRateg() - minn) / (maxn - minn) * 255f);
                             map_item_valstr[conid] = Integer.toString(list.get(i).getRateg());
                             originColor[conid] = Color.argb(rate, 44, 95, 95);
                             break;
                         case 2:
-                            rate = Math.round((float)(list.get(i).getRatebd() - minn) / (maxn - minn) * 255f);
+                            rate = Math.round((float) (list.get(i).getRatebd() - minn) / (maxn - minn) * 255f);
                             map_item_valstr[conid] = Integer.toString(list.get(i).getRatebd());
                             originColor[conid] = Color.argb(rate, 180, 44, 44);
                             break;
                         case 3:
-                            rate = Math.round((float)(list.get(i).getRategbd() - minn) / (maxn - minn) * 255f);
+                            rate = Math.round((float) (list.get(i).getRategbd() - minn) / (maxn - minn) * 255f);
                             map_item_valstr[conid] = Integer.toString(list.get(i).getRategbd());
                             originColor[conid] = Color.argb(rate, 180, 44, 44);
                             break;
                     }
                 }
-                map_itemstr[conid] = DBManager.condsts.get(conid).getNm() + " " + selRate.getSelectedItem().toString() + " " + category.getSelectedItem().toString() +" : " + map_item_valstr[conid] +"명";
-                map_item_valstr[conid] ="";
+                map_itemstr[conid] = DBManager.condsts.get(conid).getNm() + " " + selRate.getSelectedItem().toString() + " " + category.getSelectedItem().toString() + " : " + map_item_valstr[conid] + "명";
+                map_item_valstr[conid] = "";
                 map[conid].setColorFilter(originColor[conid]);
             }
             desc.setText("\t\n" +
@@ -178,7 +185,30 @@ public class Tab2Fragment extends Fragment implements ImageView.OnTouchListener 
         }
         //CLTRGN 물건 담보물 (부채량)
         else {
-
+            if (category.getSelectedItemPosition() == 2) {
+                CharSequence seldt = selMonth.getSelectedItem().toString();
+                List<CltRgnModel> list = DBManager.cltRgns.stream().filter(t -> t.getDt().contains(seldt)).collect(Collectors.toList()); //선택된 달만 추출
+                long max = 0, min = Long.MAX_VALUE;
+                for(int i=0;i<list.size();i++){
+                    max = Long.max(DBManager.cltRgns.get(i).getCollateral(),max);
+                    min = Long.min(DBManager.cltRgns.get(i).getCollateral(),min);
+                }
+                DecimalFormat df = new DecimalFormat("###,###");
+                for (int i = 0; i < list.size(); i++) {
+                    int conid = list.get(i).getCondst();
+                    long c1 = list.get(i).getCollateral() - min;
+                    long c2 = (max - min);
+                    long rate = c1*255l / c2*255l / 255l;
+                    rate = (rate>=255) ? 255 : rate;
+                    originColor[conid] = Color.argb(new Long(rate).intValue(), 120, 22, 22);
+                    map[conid].setColorFilter(originColor[conid]);
+                    map_itemstr[conid] = DBManager.condsts.get(conid).getNm() + " " + category.getSelectedItem().toString() + " : " + df.format(list.get(i).getCollateral()*1000)+"원";
+                    double tmp = Math.floor(list.get(i).getCollateral()/100000l);
+                    map_item_valstr[conid] = "(" + df.format(tmp) + "억원)";
+                }
+                desc.setText("총 물건담보대출 잔액\n" +
+                        " - 물건담보 기준(주거용 및 비주거용 부동산, 자동차 등)\n");
+            }
         }
     }
 
@@ -186,9 +216,9 @@ public class Tab2Fragment extends Fragment implements ImageView.OnTouchListener 
     public boolean onTouch(View v, MotionEvent event) {
         Bitmap bmp = Bitmap.createBitmap(v.getDrawingCache());
         int color = bmp.getPixel((int) event.getX(), (int) event.getY());
-        if (color == Color.TRANSPARENT)
+        if (color == Color.TRANSPARENT) {
             return false; // 공백터치시 무시
-        else {
+        } else {
             int idx = 1;
             for (int i = 1; i < 17; i++) { //0번은 배경이므로 1번부터
                 if (v.equals(map[i])) {
@@ -199,29 +229,42 @@ public class Tab2Fragment extends Fragment implements ImageView.OnTouchListener 
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     // 누를때
-                    if(previousSelectedMapIdx!=-1){
+                    pin.setVisibility(View.GONE);
+                    if (previousSelectedMapIdx != -1) {
                         map[previousSelectedMapIdx].setColorFilter(originColor[previousSelectedMapIdx]); // 이전에 선택했던 지역 색 초기화
-                    }else if(previousSelectedMapIdx == idx){
-                        //한번 더 눌렀을 때 초기화
-                        map[idx].setColorFilter(originColor[idx]);
-                    }else{
-                        map[idx].setColorFilter(originColor[idx], PorterDuff.Mode.DST_OUT);
                     }
+                    map[idx].setColorFilter(Color.WHITE);
+                    previousTouchMapIdx = idx;
                     break;
                 case MotionEvent.ACTION_UP:
                     // 뗄때
-                    map[idx].setColorFilter(originColor[idx], PorterDuff.Mode.DST_OUT);
+                    pin.setVisibility(View.VISIBLE);
+                    if (previousTouchMapIdx != -1)
+                        map[previousTouchMapIdx].setColorFilter(originColor[previousTouchMapIdx]);
                     showSelectedMapInfo(map_itemstr[idx], map_item_valstr[idx]);
                     previousSelectedMapIdx = idx;
+                    pin.setX(event.getX() - pin.getWidth() / 2);
+                    pin.setY(event.getY() + pin.getHeight() * 2);
                     break;
             }
             return true;
         }
     }
-    public void showSelectedMapInfo(String itemname) {
-        showSelectedMapInfo(itemname,"");
+
+    @ColorInt
+    private int adjustAlpha(@ColorInt int color, float factor) {
+        int alpha = Math.round(Color.alpha(color) * factor);
+        int red = Color.red(color);
+        int green = Color.green(color);
+        int blue = Color.blue(color);
+        return Color.argb(alpha, red, green, blue);
     }
-    public void showSelectedMapInfo(String itemname, String value) {
+
+    private void showSelectedMapInfo(String itemname) {
+        showSelectedMapInfo(itemname, "");
+    }
+
+    private void showSelectedMapInfo(String itemname, String value) {
         map_item.setText(itemname);
         map_item_val.setText(value);
     }
@@ -259,18 +302,18 @@ public class Tab2Fragment extends Fragment implements ImageView.OnTouchListener 
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 if (category.getSelectedItemPosition() >= 0) {
                     setValue();
-                    showSelectedMapInfo("군/구 별 "+ category.getSelectedItem().toString(),"\n데이터를 보고싶은 지역을 터치하세요!");
-                    if(category.getSelectedItemPosition()==2){
+                    showSelectedMapInfo("군/구 별 " + category.getSelectedItem().toString(), "\n데이터를 보고싶은 지역을 터치하세요!");
+                    if (category.getSelectedItemPosition() == 2) {
                         age.setVisibility(View.GONE);
                         selRate.setVisibility(View.GONE);
                         ageLabel.setVisibility(View.GONE);
                         rateLabel.setVisibility(View.GONE);
-                    }else if(category.getSelectedItemPosition() == 1){
+                    } else if (category.getSelectedItemPosition() == 1) {
                         age.setVisibility(View.GONE);
                         selRate.setVisibility(View.VISIBLE);
                         ageLabel.setVisibility(View.GONE);
                         rateLabel.setVisibility(View.VISIBLE);
-                    }else{
+                    } else {
                         age.setVisibility(View.VISIBLE);
                         selRate.setVisibility(View.GONE);
                         ageLabel.setVisibility(View.VISIBLE);
