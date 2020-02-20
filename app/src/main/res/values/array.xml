@@ -24,4 +24,8 @@
         <item>불량등급</item>
         <item>초불량등급</item>
     </string-array>
+    <string-array name="fin_catgory">
+        <item>신용카드 거래정보</item>
+        <item>종별 예금정보</item>
+    </string-array>
 </resources>
