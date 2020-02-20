@@ -16,6 +16,7 @@ import com.anychart.AnyChartView;
 import com.anychart.chart.common.dataentry.DataEntry;
 import com.anychart.chart.common.dataentry.ValueDataEntry;
 import com.anychart.charts.Cartesian;
+import com.anychart.charts.Pie;
 import com.anychart.core.cartesian.series.Line;
 import com.anychart.data.Mapping;
 import com.anychart.data.Set;
@@ -23,9 +24,16 @@ import com.anychart.enums.Anchor;
 import com.anychart.enums.MarkerType;
 import com.anychart.enums.TooltipPositionMode;
 import com.anychart.graphics.vector.Stroke;
+import com.bnk.example.bnkdata.ChartLib.BarChart;
+import com.bnk.example.bnkdata.ChartLib.LineChart;
+import com.bnk.example.bnkdata.ChartLib.PieChart;
+import com.bnk.example.bnkdata.DB.DBManager;
+import com.bnk.example.bnkdata.Model.CrdStrModel;
+import com.bnk.example.bnkdata.Model.DepositModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Tab3Fragment extends Fragment {
 
@@ -39,112 +47,40 @@ public class Tab3Fragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_tab33, container, false);
         //예금
+        //TODO: 각 월별로 요구불예금, 저축성 예금 라인차트로 그리기 (1번차트) 상승률을 써보까? - 실패 - pie차트
+        List<DepositModel> dpsTotalList = DBManager.deposits.stream().filter(t->(t.getDpstyp()==1 ||t.getDpstyp()==9 )&&(t.getDt().contains("2019-11"))).collect(Collectors.toList());
 
+        //1번차트 그리기
         AnyChartView anyChartView = view.findViewById(R.id.chart1);
         APIlib.getInstance().setActiveAnyChartView(anyChartView);
 
-        Cartesian cartesian = AnyChart.line();
+        PieChart ch = new PieChart();
+        Pie pie = ch.makeBar_deposit(dpsTotalList);
+        anyChartView.setChart(pie);
 
-        cartesian.animation(true);
+        //TODO: 요구불 11월 금액 BAR차트, 저축성 11월 BAR 차트 (2,3번차트)
 
-        cartesian.padding(10d, 20d, 5d, 20d);
+        List<DepositModel> depositsmallList1 = DBManager.deposits.stream().filter(t->(t.getDt().contains("2019-11")&&(t.getDpstyp() >1 && t.getDpstyp()<9 ))).collect(Collectors.toList());
 
-        cartesian.crosshair().enabled(true);
-        cartesian.crosshair()
-                .yLabel(true)
-                // TODO ystroke
-                .yStroke((Stroke) null, null, null, (String) null, (String) null);
+        //2번차트 그리기
+        AnyChartView anyChartView2 = view.findViewById(R.id.chart2_1);
+        APIlib.getInstance().setActiveAnyChartView(anyChartView2);
 
-        cartesian.tooltip().positionMode(TooltipPositionMode.POINT);
+        BarChart bar = new BarChart();
+        Cartesian cartesian1 = bar.dps_makeBar(depositsmallList1);
+        anyChartView2.setChart(cartesian1);
 
-        cartesian.title("2019 기간별 예금액 ");
+        List<DepositModel> depositsmallList2 = DBManager.deposits.stream().filter(t->(t.getDt().contains("2019-11")&&(t.getDpstyp()>9 ))).collect(Collectors.toList());
 
-        cartesian.yAxis(0).title("Number of Bottles Sold (thousands)");
-        cartesian.xAxis(0).labels().padding(5d, 5d, 5d, 5d);
+//        //3번차트 그리기
+        AnyChartView anyChartView3 = view.findViewById(R.id.chart2_2);
+        APIlib.getInstance().setActiveAnyChartView(anyChartView3);
+        Cartesian cartesian2 = bar.dps_makeBar(depositsmallList2);
+        anyChartView3.setChart(cartesian2);
 
-        List<DataEntry> seriesData = new ArrayList<>();
-        seriesData.add(new CustomDataEntry("1986", 3.6, 2.3, 2.8));
-        seriesData.add(new CustomDataEntry("1987", 7.1, 4.0, 4.1));
-        seriesData.add(new CustomDataEntry("1988", 8.5, 6.2, 5.1));
-        seriesData.add(new CustomDataEntry("1989", 9.2, 11.8, 6.5));
-        seriesData.add(new CustomDataEntry("1990", 10.1, 13.0, 12.5));
-        seriesData.add(new CustomDataEntry("1991", 11.6, 13.9, 18.0));
-        seriesData.add(new CustomDataEntry("1992", 16.4, 18.0, 21.0));
-        seriesData.add(new CustomDataEntry("1993", 18.0, 23.3, 20.3));
-        seriesData.add(new CustomDataEntry("1994", 13.2, 24.7, 19.2));
-        seriesData.add(new CustomDataEntry("1995", 12.0, 18.0, 14.4));
-        seriesData.add(new CustomDataEntry("1996", 3.2, 15.1, 9.2));
-        seriesData.add(new CustomDataEntry("1997", 4.1, 11.3, 5.9));
-        seriesData.add(new CustomDataEntry("1998", 6.3, 14.2, 5.2));
-        seriesData.add(new CustomDataEntry("1999", 9.4, 13.7, 4.7));
-        seriesData.add(new CustomDataEntry("2000", 11.5, 9.9, 4.2));
-        seriesData.add(new CustomDataEntry("2001", 13.5, 12.1, 1.2));
-        seriesData.add(new CustomDataEntry("2002", 14.8, 13.5, 5.4));
-        seriesData.add(new CustomDataEntry("2003", 16.6, 15.1, 6.3));
-        seriesData.add(new CustomDataEntry("2004", 18.1, 17.9, 8.9));
-        seriesData.add(new CustomDataEntry("2005", 17.0, 18.9, 10.1));
-        seriesData.add(new CustomDataEntry("2006", 16.6, 20.3, 11.5));
-        seriesData.add(new CustomDataEntry("2007", 14.1, 20.7, 12.2));
-        seriesData.add(new CustomDataEntry("2008", 15.7, 21.6, 10));
-        seriesData.add(new CustomDataEntry("2009", 12.0, 22.5, 8.9));
-
-        Set set = Set.instantiate();
-        set.data(seriesData);
-        Mapping series1Mapping = set.mapAs("{ x: 'x', value: 'value' }");
-        Mapping series2Mapping = set.mapAs("{ x: 'x', value: 'value2' }");
-        Mapping series3Mapping = set.mapAs("{ x: 'x', value: 'value3' }");
-
-        Line series1 = cartesian.line(series1Mapping);
-        series1.name("Brandy");
-        series1.hovered().markers().enabled(true);
-        series1.hovered().markers()
-                .type(MarkerType.CIRCLE)
-                .size(4d);
-        series1.tooltip()
-                .position("right")
-                .anchor(Anchor.LEFT_CENTER)
-                .offsetX(5d)
-                .offsetY(5d);
-
-        Line series2 = cartesian.line(series2Mapping);
-        series2.name("Whiskey");
-        series2.hovered().markers().enabled(true);
-        series2.hovered().markers()
-                .type(MarkerType.CIRCLE)
-                .size(4d);
-        series2.tooltip()
-                .position("right")
-                .anchor(Anchor.LEFT_CENTER)
-                .offsetX(5d)
-                .offsetY(5d);
-
-        Line series3 = cartesian.line(series3Mapping);
-        series3.name("Tequila");
-        series3.hovered().markers().enabled(true);
-        series3.hovered().markers()
-                .type(MarkerType.CIRCLE)
-                .size(4d);
-        series3.tooltip()
-                .position("right")
-                .anchor(Anchor.LEFT_CENTER)
-                .offsetX(5d)
-                .offsetY(5d);
-
-        cartesian.legend().enabled(true);
-        cartesian.legend().fontSize(13d);
-        cartesian.legend().padding(0d, 0d, 10d, 0d);
-
-        anyChartView.setChart(cartesian);
+        //TODO : 기간별 예금액 (6개월, 1년, 2년, 3년) 기간별로 각각 TOP1인 기간,금액 출력 가로 바차트 (4번차트)
         return view;
     }
-    private class CustomDataEntry extends ValueDataEntry {
 
-        CustomDataEntry(String x, Number value, Number value2, Number value3) {
-            super(x, value);
-            setValue("value2", value2);
-            setValue("value3", value3);
-        }
-
-    }
 
 }

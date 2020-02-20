@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -29,7 +30,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_margin="10dp">
+                    android:layout_margin="5dp">
 
                     <android.support.design.widget.TextInputEditText
                         android:id="@+id/dept_in"
@@ -44,7 +45,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_margin="10dp">
+                    android:layout_margin="5dp">
 
                     <android.support.design.widget.TextInputEditText
                         android:id="@+id/ename_in"
@@ -59,7 +60,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp">
+                android:layout_margin="5dp">
 
                 <android.support.design.widget.TextInputEditText
                     android:id="@+id/title_in"
@@ -74,7 +75,9 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp">
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                >
 
                 <android.support.design.widget.TextInputEditText
                     android:id="@+id/content_in"
@@ -88,16 +91,36 @@
                     android:minWidth="10.0dip"
                     android:scrollHorizontally="false" />
             </android.support.design.widget.TextInputLayout>
-
-            <Button
-                android:id="@+id/btnInsert"
+            <LinearLayout
+                android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:background="@color/colorPrimary"
-                android:text="submit"
-                android:textColor="@android:color/white"
-                android:textStyle="bold" />
+                android:orientation="horizontal" >
+
+                <Button
+                    android:id="@+id/btnclear"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="7dp"
+                    android:layout_marginRight="7dp"
+                    android:background="@color/colorbg"
+                    android:text="clear"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btnInsert"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="7dp"
+                    android:layout_marginRight="7dp"
+                    android:background="@color/colorAccent"
+                    android:text="submit"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold" />
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>

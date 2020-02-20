@@ -1,5 +1,6 @@
 package com.bnk.example.bnkdata;
 
+import android.app.ActionBar;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -28,6 +29,7 @@ public class WriteFragment extends Fragment {
     MyDBHelper mDBHelper;
     Context context;
     Button insbtn;
+    Button clrbtn;
     EditText ename;
     EditText dept;
     EditText title;
@@ -35,7 +37,7 @@ public class WriteFragment extends Fragment {
 
     SQLiteDatabase db;
     ContentValues values;
-   // String[] projection = { "rno", "ename", "dept","title","content" };
+    // String[] projection = { "rno", "ename", "dept","title","content" };
     Cursor cur;
 
     ArrayList<Report> reports = new ArrayList<>();
@@ -46,16 +48,21 @@ public class WriteFragment extends Fragment {
 
         context = container.getContext();
         insbtn = view.findViewById(R.id.btnInsert);
+        clrbtn = view.findViewById(R.id.btnclear);
 
         ename = view.findViewById(R.id.ename_in);
         dept = view.findViewById(R.id.dept_in);
         title = view.findViewById(R.id.title_in);
         content = view.findViewById(R.id.content_in);
 
-        ename.setText("");
-        dept.setText("");
-        title.setText("");
-        content.setText("");
+        clearText();
+
+        clrbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clearText();
+            }
+        });
 
         insbtn.setOnClickListener(new View.OnClickListener() {
 
@@ -77,10 +84,7 @@ public class WriteFragment extends Fragment {
                     db.insert("report", null, values);
                     mDBHelper.close();
                     Toast.makeText(context,"보고서가 등록되었습니다.",Toast.LENGTH_SHORT).show();
-                    ename.setText("");
-                    dept.setText("");
-                    title.setText("");
-                    content.setText("");
+                    clearText();
                 }else{
                     Log.d("test","onclick! failed!");
                     Toast.makeText(context,"정보를 올바르게 입력했는지 확인하세요.",Toast.LENGTH_SHORT).show();
@@ -89,5 +93,11 @@ public class WriteFragment extends Fragment {
         });
         //db insert하기
         return view;
+    }
+    public void clearText(){
+        ename.setText("");
+        dept.setText("");
+        title.setText("");
+        content.setText("");
     }
 }
