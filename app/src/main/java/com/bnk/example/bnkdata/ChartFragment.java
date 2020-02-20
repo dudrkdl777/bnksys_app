@@ -35,9 +35,7 @@ public class ChartFragment extends Fragment {
                 getActivity().getSupportFragmentManager(), mTabLayout.getTabCount());
 
         mViewPager.setAdapter(mContentPagerAdapter);
-
 //        mViewPager.setOffscreenPageLimit(2);    //이전 혹은 다음 페이지 1개를 미리 로딩하기.(속도)
-
         mViewPager.addOnPageChangeListener(
 
                 new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
