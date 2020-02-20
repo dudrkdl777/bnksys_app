@@ -66,12 +66,12 @@ public class Tab2Fragment extends Fragment implements ImageView.OnTouchListener 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_tab3, null);
         Log.d("load", "==========loadImgStart===========");
-        valInit(view);
-        createSpinner(view);
-        createMap(view);
-        age.setSelection(1);
-        setValue();
-        showSelectedMapInfo("군/구 별 " + age.getSelectedItem().toString() + "대 " + category.getSelectedItem().toString(),"데이터를 보고싶은 지역을 터치해주세요!");
+//        valInit(view);
+//        createSpinner(view);
+//        createMap(view);
+//        age.setSelection(1);
+//        setValue();
+//        showSelectedMapInfo("군/구 별 " + age.getSelectedItem().toString() + "대 " + category.getSelectedItem().toString(),"데이터를 보고싶은 지역을 터치해주세요!");
         return view;
     }
     private void setValue() {

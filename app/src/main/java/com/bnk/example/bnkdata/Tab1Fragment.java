@@ -53,14 +53,15 @@ public class Tab1Fragment extends Fragment {
         //TODO: 11월 전체 산업별 거래정보 파이차트에 넣기
         //산업별거래정보:crdStr
         List<CrdStrModel> cdr_list = DBManager.crdStrs.stream().filter(t->t.getDt().contains("2019-11-01")).collect(Collectors.toList());
-//        Log.d("chartest!",list.get(0).getSector()+"/"+list.get(0).getVolume()+"/"+list.get(0).getDt()+"/");
+//        Log.d("chartest!",cdr_list.get(0).getSector()+"/"+list.get(0).getVolume()+"/"+list.get(0).getDt()+"/");
+        //List<CrdStrModel> cdr_list = DBManager.crdStrs.stream().filter(t->t.getDt().contains("2019-11-01")).collect(Collectors.toList());
+
         //pie차트 호출
         PieChart test = new PieChart();
         Pie pie = test.makePie(cdr_list);
         anyChartView.setChart(pie);
 
         /////////////////////////
-
 
 
         AnyChartView anyChartView2 = view.findViewById(R.id.any_chart_view2);
