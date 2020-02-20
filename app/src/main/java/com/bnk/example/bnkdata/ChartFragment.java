@@ -53,7 +53,6 @@ public class ChartFragment extends Fragment {
 
 
             @Override
-
             public void onTabUnselected(TabLayout.Tab tab) {
             }
             @Override
