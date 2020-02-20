@@ -133,6 +133,15 @@
                     android:textAlignment="center"
                     android:textSize="14sp"
                     android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:editable="false"
+                    android:ems="10"
+                    android:inputType="textMultiLine"
+                    android:textSize="10sp" />
             </LinearLayout>
 
         </android.support.v7.widget.CardView>

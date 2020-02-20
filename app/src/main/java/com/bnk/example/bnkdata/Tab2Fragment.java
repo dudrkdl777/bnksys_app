@@ -1,5 +1,6 @@
 package com.bnk.example.bnkdata;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -23,7 +24,10 @@ import android.widget.TextView;
 import com.bnk.example.bnkdata.DB.DBManager;
 import com.bnk.example.bnkdata.Model.CrByAgeModel;
 import com.bnk.example.bnkdata.Model.CrByRgnModel;
+import com.bnk.example.bnkdata.Model.CrdStrModel;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,7 +45,7 @@ public class Tab2Fragment extends Fragment implements ImageView.OnTouchListener 
     String[] ctgstr; // CRBYAGE,CRBYRGN,CLTRGN
     String[] months, ages, rates;
 
-    TextView rateLabel, ageLabel, map_item, map_item_val;
+    TextView rateLabel, ageLabel, map_item, map_item_val,desc;
 
     int previousSelectedMapIdx = -1; // 이전에 선택했던 지역의 선택효과 초기화를 위해 저장
 
@@ -54,8 +58,12 @@ public class Tab2Fragment extends Fragment implements ImageView.OnTouchListener 
     private void valInit(View view) {
         map_item = view.findViewById(R.id.map_item);
         map_item_val = view.findViewById(R.id.map_item_val);
+        rateLabel = view.findViewById(R.id.rateLabel);
+        ageLabel = view.findViewById(R.id.ageLabel);
+        desc = view.findViewById(R.id.description);
 
         age = view.findViewById(R.id.spinner_age);
+
         selRate = view.findViewById(R.id.spinner_selRate);
         category = view.findViewById(R.id.spinner_category);
         selMonth = view.findViewById(R.id.spinner);
@@ -75,7 +83,6 @@ public class Tab2Fragment extends Fragment implements ImageView.OnTouchListener 
         createSpinner(view);
         createMap(view);
         age.setSelection(1);
-        setValue();
         showSelectedMapInfo("군/구 별 " + age.getSelectedItem().toString() + "대 " + category.getSelectedItem().toString(),"데이터를 보고싶은 지역을 터치해주세요!");
         return view;
     }
@@ -92,10 +99,12 @@ public class Tab2Fragment extends Fragment implements ImageView.OnTouchListener 
                     int rate = Math.round((list.get(i).getAvgcr()-mincr) / (maxcr-mincr) * 255f);
                     originColor[conid] = Color.argb(rate, 180, 44, 44);
                     map[conid].setColorFilter(originColor[conid]);
-                    map_itemstr[conid] = DBManager.condsts.get(conid).getNm() + " " + age.getSelectedItem().toString() + "대 " + category.getSelectedItem().toString();
                     map_item_valstr[conid] = Float.toString(list.get(i).getAvgcr());
+                    map_itemstr[conid] = DBManager.condsts.get(conid).getNm() + " " + age.getSelectedItem().toString() + "대 " + category.getSelectedItem().toString() +" : " + map_item_valstr[conid];
                 }
             }
+            desc.setText(" ※ 신용등급 범위: 1~10등급 (1에 가까울수록 우량함)\n" +
+                    " ※ 신용정보법에 따른 부산 만18세이상 경제활동 경험 인구 기준으로 민간 신용평가\n");
         }
         //CRBYRGN 등급별 신용자수
         else if (category.getSelectedItemPosition() == 1) {
@@ -122,6 +131,7 @@ public class Tab2Fragment extends Fragment implements ImageView.OnTouchListener 
                         break;
                 }
             }
+            minn /= 2;
             for (int i = 0; i < list.size(); i++) {
                 int conid = list.get(i).getCondst();
                 int rate = 0;
@@ -132,30 +142,39 @@ public class Tab2Fragment extends Fragment implements ImageView.OnTouchListener 
                 }else {
                     switch (selRate.getSelectedItemPosition()) {
                         case 0:
-                            rate = Math.round((list.get(i).getRatesg() - minn) / (maxn - minn) * 255f);
+                            rate = Math.round((float)(list.get(i).getRatesg() - minn) / (maxn - minn) * 255f);
                             map_item_valstr[conid] = Integer.toString(list.get(i).getRatesg());
                             originColor[conid] = Color.argb(rate, 44, 200, 44);
                             break;
                         case 1:
-                            rate = Math.round((list.get(i).getRateg() - minn) / (maxn - minn) * 255f);
+                            rate = Math.round((float)(list.get(i).getRateg() - minn) / (maxn - minn) * 255f);
                             map_item_valstr[conid] = Integer.toString(list.get(i).getRateg());
                             originColor[conid] = Color.argb(rate, 44, 95, 95);
                             break;
                         case 2:
-                            rate = Math.round((list.get(i).getRatebd() - minn) / (maxn - minn) * 255f);
+                            rate = Math.round((float)(list.get(i).getRatebd() - minn) / (maxn - minn) * 255f);
                             map_item_valstr[conid] = Integer.toString(list.get(i).getRatebd());
                             originColor[conid] = Color.argb(rate, 180, 44, 44);
                             break;
                         case 3:
-                            rate = Math.round((list.get(i).getRategbd() - minn) / (maxn - minn) * 255f);
+                            rate = Math.round((float)(list.get(i).getRategbd() - minn) / (maxn - minn) * 255f);
                             map_item_valstr[conid] = Integer.toString(list.get(i).getRategbd());
                             originColor[conid] = Color.argb(rate, 180, 44, 44);
                             break;
                     }
                 }
-                map_itemstr[conid] = DBManager.condsts.get(conid).getNm() + " " + selRate.getSelectedItem().toString() + " " + category.getSelectedItem().toString();
+                map_itemstr[conid] = DBManager.condsts.get(conid).getNm() + " " + selRate.getSelectedItem().toString() + " " + category.getSelectedItem().toString() +" : " + map_item_valstr[conid] +"명";
+                map_item_valstr[conid] ="";
                 map[conid].setColorFilter(originColor[conid]);
             }
+            desc.setText("\t\n" +
+                    "○ 초우량관리지수 : 고객군별 최상위 Band(1~2) 지수에 해당하는 카드 이용자수" +
+                    "\n" +
+                    "○ 우량관리지수 : 고객군별 상위 Band(1~3) 지수에 해당하는 카드 이용자수" +
+                    "\n" +
+                    "○ 불량관리지수 : 고객군별 하위 Band(7~10) 지수에 해당하는 카드 이용자수" +
+                    "\n" +
+                    "○ 초불량관리지수 : 고객군별 하위 Band(9~10) 지수에 해당하는 카드 이용자수");
         }
         //CLTRGN 물건 담보물 (부채량)
         else {
@@ -199,7 +218,9 @@ public class Tab2Fragment extends Fragment implements ImageView.OnTouchListener 
             return true;
         }
     }
-
+    public void showSelectedMapInfo(String itemname) {
+        showSelectedMapInfo(itemname,"");
+    }
     public void showSelectedMapInfo(String itemname, String value) {
         map_item.setText(itemname);
         map_item_val.setText(value);
@@ -238,16 +259,22 @@ public class Tab2Fragment extends Fragment implements ImageView.OnTouchListener 
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 if (category.getSelectedItemPosition() >= 0) {
                     setValue();
-                    showSelectedMapInfo("군/구 별 "+ category.getSelectedItem().toString(),"데이터를 보고싶은 지역을 터치하세요!");
+                    showSelectedMapInfo("군/구 별 "+ category.getSelectedItem().toString(),"\n데이터를 보고싶은 지역을 터치하세요!");
                     if(category.getSelectedItemPosition()==2){
                         age.setVisibility(View.GONE);
                         selRate.setVisibility(View.GONE);
+                        ageLabel.setVisibility(View.GONE);
+                        rateLabel.setVisibility(View.GONE);
                     }else if(category.getSelectedItemPosition() == 1){
                         age.setVisibility(View.GONE);
                         selRate.setVisibility(View.VISIBLE);
+                        ageLabel.setVisibility(View.GONE);
+                        rateLabel.setVisibility(View.VISIBLE);
                     }else{
                         age.setVisibility(View.VISIBLE);
                         selRate.setVisibility(View.GONE);
+                        ageLabel.setVisibility(View.VISIBLE);
+                        rateLabel.setVisibility(View.GONE);
                     }
                 }
             }
@@ -297,7 +324,7 @@ public class Tab2Fragment extends Fragment implements ImageView.OnTouchListener 
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 setValue();
-                showSelectedMapInfo(selRate.getSelectedItem().toString() + " " + category.getSelectedItem().toString(), selMonth.getSelectedItem().toString());
+                //showSelectedMapInfo(selRate.getSelectedItem().toString() + " " + category.getSelectedItem().toString(), selMonth.getSelectedItem().toString());
             }
 
             @Override
