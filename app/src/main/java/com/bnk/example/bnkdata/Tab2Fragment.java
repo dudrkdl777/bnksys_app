@@ -69,6 +69,7 @@ public class Tab2Fragment extends Fragment implements ImageView.OnTouchListener 
     }
 
     private void setValue(){
+        //선택된 날짜
         CharSequence seldt = spinner.getSelectedItem().toString();
         List<CrByAgeModel> list = DBManager.crByAges.stream().filter(t->t.getDt().contains(seldt)).collect(Collectors.toList()); //선택된 달만 추출
         float maxcr = 4.8f;
