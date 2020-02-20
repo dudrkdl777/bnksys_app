@@ -28,6 +28,8 @@ public class ChartFragment extends Fragment {
 
                 mTabLayout.addTab(mTabLayout.newTab().setCustomView(createTabView("금융")));
         mTabLayout.addTab(mTabLayout.newTab().setCustomView(createTabView("신용")));
+        mTabLayout.addTab(mTabLayout.newTab().setCustomView(createTabView("예금")));
+        mTabLayout.addTab(mTabLayout.newTab().setCustomView(createTabView("경제")));
 
         mViewPager = (ViewPager) view.findViewById(R.id.pager_content);
 

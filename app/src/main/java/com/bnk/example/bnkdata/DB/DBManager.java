@@ -48,7 +48,7 @@ public class DBManager {
     public <T> ArrayList<T> getTable(String tablename) {
         try {
             String body = "", json = "";
-            json = new HttpUtil().execute("http://192.168.0.43:8081/example/getDB?table=" + tablename, body).get();
+            json = new HttpUtil().execute("http://192.168.10.109:8081/example/getDB?table=" + tablename, body).get();
             ObjectMapper mapper = new ObjectMapper();
             switch (tablename) {
                 case "CrdStrModel":

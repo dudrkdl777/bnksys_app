@@ -25,9 +25,9 @@ public class ContentsPagerAdapter extends FragmentStatePagerAdapter {
             case 1:
                 Tab2Fragment tab2Fragment = new Tab2Fragment();
                 return tab2Fragment;
-//            case 2://예금
-//                Tab3Fragment tab3Fragment = new Tab3Fragment();
-//                return tab3Fragment;
+            case 2://예금
+                Tab3Fragment tab3Fragment = new Tab3Fragment();
+                return tab3Fragment;
             case 3://경제 - 웹뷰
                 Tab4Fragment tab4Fragment = new Tab4Fragment();
                 return tab4Fragment;
