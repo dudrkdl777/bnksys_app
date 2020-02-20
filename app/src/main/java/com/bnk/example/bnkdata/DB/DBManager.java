@@ -1,5 +1,6 @@
 package com.bnk.example.bnkdata.DB;
 
+import android.content.Intent;
 import android.util.Log;
 
 import com.bnk.example.bnkdata.HttpUtil;
@@ -32,6 +33,7 @@ public class DBManager {
     }
 
     public void setStaticDB() {
+
         cltRgns = getTable("CltRgnModel");
         condsts = getTable("CondstModel");
         crByAges = getTable("CrByAgeModel");

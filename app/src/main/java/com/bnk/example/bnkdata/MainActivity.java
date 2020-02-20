@@ -1,5 +1,7 @@
 package com.bnk.example.bnkdata;
 
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
@@ -16,7 +18,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Arrays;
 import java.util.List;
 
+
 public class MainActivity extends AppCompatActivity {
+
 
     // FrameLayout에 각 메뉴의 Fragment를 바꿔 줌
     private FragmentManager fragmentManager = getSupportFragmentManager();
@@ -26,12 +30,16 @@ public class MainActivity extends AppCompatActivity {
     private ReportFragment reportFragment = new ReportFragment();
     private WriteFragment writeFragment = new WriteFragment();
 
+    private ProgressDialog mProgressSpinnerDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         /*웹서버연결시작*/
         // DB매니저 초기화, 이후부터 스태틱 ArrayList 사용가능
+        Intent intent = new Intent(MainActivity.this, ProgressDialogActivity.class);
+        startActivity( intent );
         DBManager.getInstance().setStaticDB();
         // DBManager.getInstance().sectors 와 같이 참조가능
         /*웹서버 연결 끝*/

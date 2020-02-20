@@ -3,13 +3,11 @@ package com.bnk.example.bnkdata;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -19,7 +17,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.graphics.Matrix;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -39,12 +36,12 @@ public class Tab2Fragment extends Fragment implements ImageView.OnTouchListener 
     int[] rscid = {R.drawable.m0, R.drawable.m1, R.drawable.m2, R.drawable.m3, R.drawable.m4, R.drawable.m5, R.drawable.m6, R.drawable.m7, R.drawable.m8, R.drawable.m9,
             R.drawable.m10, R.drawable.m11, R.drawable.m12, R.drawable.m13, R.drawable.m14, R.drawable.m15, R.drawable.m16};
     FrameLayout frame;
-    Spinner spinner, category, age;
+    Spinner selMonth, category, age, selRate;
 
-    String[] ctgstr = {"평균 신용등급", "우량 신용자수", "물건 담보물"}; // CRBYAGE,CRBYRGN,CLTRGN
-    String[] months, ages; // 2019-12 , 2019-09, 2019-06
+    String[] ctgstr; // CRBYAGE,CRBYRGN,CLTRGN
+    String[] months, ages, rates;
 
-    TextView map_item, map_item_val;
+    TextView rateLabel, ageLabel, map_item, map_item_val;
 
     int previousSelectedMapIdx = -1; // 이전에 선택했던 지역의 선택효과 초기화를 위해 저장
 
@@ -57,8 +54,16 @@ public class Tab2Fragment extends Fragment implements ImageView.OnTouchListener 
     private void valInit(View view) {
         map_item = view.findViewById(R.id.map_item);
         map_item_val = view.findViewById(R.id.map_item_val);
+
+        age = view.findViewById(R.id.spinner_age);
+        selRate = view.findViewById(R.id.spinner_selRate);
+        category = view.findViewById(R.id.spinner_category);
+        selMonth = view.findViewById(R.id.spinner);
+
+        ctgstr = getResources().getStringArray(R.array.ctg);
         months = getResources().getStringArray(R.array.months);
         ages = getResources().getStringArray(R.array.ages);
+        rates = getResources().getStringArray(R.array.cr);
     }
 
     @Nullable
@@ -66,18 +71,18 @@ public class Tab2Fragment extends Fragment implements ImageView.OnTouchListener 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_tab3, null);
         Log.d("load", "==========loadImgStart===========");
-//        valInit(view);
-//        createSpinner(view);
-//        createMap(view);
-//        age.setSelection(1);
-//        setValue();
-//        showSelectedMapInfo("군/구 별 " + age.getSelectedItem().toString() + "대 " + category.getSelectedItem().toString(),"데이터를 보고싶은 지역을 터치해주세요!");
+        valInit(view);
+        createSpinner(view);
+        createMap(view);
+        age.setSelection(1);
+        setValue();
+        showSelectedMapInfo("군/구 별 " + age.getSelectedItem().toString() + "대 " + category.getSelectedItem().toString(),"데이터를 보고싶은 지역을 터치해주세요!");
         return view;
     }
     private void setValue() {
         //CRBYAGE , 평균 신용등급
-        if (spinner.getSelectedItemPosition() == 0) {
-            CharSequence seldt = spinner.getSelectedItem().toString();
+        if (category.getSelectedItemPosition() == 0) {
+            CharSequence seldt = selMonth.getSelectedItem().toString();
             List<CrByAgeModel> list = DBManager.crByAges.stream().filter(t -> t.getDt().contains(seldt)).collect(Collectors.toList()); //선택된 달만 추출
             float maxcr = 4.8f;
             float mincr = 2.9f;
@@ -92,11 +97,65 @@ public class Tab2Fragment extends Fragment implements ImageView.OnTouchListener 
                 }
             }
         }
-        //CRBYRGN 우량 신용자수
-        else if (spinner.getSelectedItemPosition() == 1) {
-            CharSequence seldt = spinner.getSelectedItem().toString();
+        //CRBYRGN 등급별 신용자수
+        else if (category.getSelectedItemPosition() == 1) {
+            CharSequence seldt = selMonth.getSelectedItem().toString();
             List<CrByRgnModel> list = DBManager.crByRgns.stream().filter(t -> t.getDt().contains(seldt)).collect(Collectors.toList());
-
+            int maxn = 0,minn = Integer.MAX_VALUE;
+            for(int i=0; i<list.size();i++){
+                switch(selRate.getSelectedItemPosition()){
+                    case 0:
+                        maxn = Integer.max(maxn,DBManager.crByRgns.get(i).getRatesg());
+                        minn = Integer.min(minn,DBManager.crByRgns.get(i).getRatesg());
+                        break;
+                    case 1:
+                        maxn = Integer.max(maxn,DBManager.crByRgns.get(i).getRateg());
+                        minn = Integer.min(minn,DBManager.crByRgns.get(i).getRateg());
+                        break;
+                    case 2:
+                        maxn = Integer.max(maxn,DBManager.crByRgns.get(i).getRatebd());
+                        minn = Integer.min(minn,DBManager.crByRgns.get(i).getRatebd());
+                        break;
+                    case 3:
+                        maxn = Integer.max(maxn,DBManager.crByRgns.get(i).getRategbd());
+                        minn = Integer.min(minn,DBManager.crByRgns.get(i).getRategbd());
+                        break;
+                }
+            }
+            for (int i = 0; i < list.size(); i++) {
+                int conid = list.get(i).getCondst();
+                int rate = 0;
+                if(maxn-minn == 0){
+                    rate = 0;
+                    map_item_valstr[conid] = Integer.toString(0);
+                    originColor[conid] = Color.argb(0, 0, 0, 0);
+                }else {
+                    switch (selRate.getSelectedItemPosition()) {
+                        case 0:
+                            rate = Math.round((list.get(i).getRatesg() - minn) / (maxn - minn) * 255f);
+                            map_item_valstr[conid] = Integer.toString(list.get(i).getRatesg());
+                            originColor[conid] = Color.argb(rate, 44, 200, 44);
+                            break;
+                        case 1:
+                            rate = Math.round((list.get(i).getRateg() - minn) / (maxn - minn) * 255f);
+                            map_item_valstr[conid] = Integer.toString(list.get(i).getRateg());
+                            originColor[conid] = Color.argb(rate, 44, 95, 95);
+                            break;
+                        case 2:
+                            rate = Math.round((list.get(i).getRatebd() - minn) / (maxn - minn) * 255f);
+                            map_item_valstr[conid] = Integer.toString(list.get(i).getRatebd());
+                            originColor[conid] = Color.argb(rate, 180, 44, 44);
+                            break;
+                        case 3:
+                            rate = Math.round((list.get(i).getRategbd() - minn) / (maxn - minn) * 255f);
+                            map_item_valstr[conid] = Integer.toString(list.get(i).getRategbd());
+                            originColor[conid] = Color.argb(rate, 180, 44, 44);
+                            break;
+                    }
+                }
+                map_itemstr[conid] = DBManager.condsts.get(conid).getNm() + " " + selRate.getSelectedItem().toString() + " " + category.getSelectedItem().toString();
+                map[conid].setColorFilter(originColor[conid]);
+            }
         }
         //CLTRGN 물건 담보물 (부채량)
         else {
@@ -127,7 +186,7 @@ public class Tab2Fragment extends Fragment implements ImageView.OnTouchListener 
                         //한번 더 눌렀을 때 초기화
                         map[idx].setColorFilter(originColor[idx]);
                     }else{
-                        map[idx].setColorFilter(originColor[idx], PorterDuff.Mode.SRC_IN);
+                        map[idx].setColorFilter(originColor[idx], PorterDuff.Mode.DST_OUT);
                     }
                     break;
                 case MotionEvent.ACTION_UP:
@@ -171,24 +230,6 @@ public class Tab2Fragment extends Fragment implements ImageView.OnTouchListener 
     }
 
     private void createSpinner(View view) {
-        age = view.findViewById(R.id.spinner_age);
-
-        final ArrayAdapter<String> adapterage = new ArrayAdapter<>(getContext(), R.layout.spinner_text_small, ages);
-        adapterage.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-        age.setAdapter(adapterage);
-        age.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                setValue();
-                showSelectedMapInfo(age.getSelectedItem().toString() + "대 " + category.getSelectedItem().toString(),spinner.getSelectedItem().toString());
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-            }
-        });
-        category = view.findViewById(R.id.spinner_category);
-
         final ArrayAdapter<String> adapterctg = new ArrayAdapter<>(getContext(), R.layout.spinner_text, ctgstr);
         adapterctg.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         category.setAdapter(adapterctg);
@@ -198,10 +239,15 @@ public class Tab2Fragment extends Fragment implements ImageView.OnTouchListener 
                 if (category.getSelectedItemPosition() >= 0) {
                     setValue();
                     showSelectedMapInfo("군/구 별 "+ category.getSelectedItem().toString(),"데이터를 보고싶은 지역을 터치하세요!");
-                    if(category.getSelectedItemPosition()>0){
+                    if(category.getSelectedItemPosition()==2){
                         age.setVisibility(View.GONE);
+                        selRate.setVisibility(View.GONE);
+                    }else if(category.getSelectedItemPosition() == 1){
+                        age.setVisibility(View.GONE);
+                        selRate.setVisibility(View.VISIBLE);
                     }else{
                         age.setVisibility(View.VISIBLE);
+                        selRate.setVisibility(View.GONE);
                     }
                 }
             }
@@ -211,17 +257,47 @@ public class Tab2Fragment extends Fragment implements ImageView.OnTouchListener 
             }
         });
 
-        spinner = view.findViewById(R.id.spinner);
         // months.xml 배열로 가져오기
         //spinner_text.xml과 str을 인자로 어댑터 생성.
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.spinner_text_small, months);
         adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        selMonth.setAdapter(adapter);
+        selMonth.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 setValue();
-                showSelectedMapInfo("군/구 별 " + category.getSelectedItem().toString(),spinner.getSelectedItem().toString());
+                showSelectedMapInfo("군/구 별 " + category.getSelectedItem().toString(), selMonth.getSelectedItem().toString());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
+        });
+
+        final ArrayAdapter<String> adapterage = new ArrayAdapter<>(getContext(), R.layout.spinner_text_small, ages);
+        adapterage.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        age.setAdapter(adapterage);
+        age.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                setValue();
+                showSelectedMapInfo(age.getSelectedItem().toString() + "대 " + category.getSelectedItem().toString(), selMonth.getSelectedItem().toString());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
+        });
+
+
+        final ArrayAdapter<String> adapterate = new ArrayAdapter<>(getContext(), R.layout.spinner_text_small, rates);
+        adapterate.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        selRate.setAdapter(adapterate);
+        selRate.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                setValue();
+                showSelectedMapInfo(selRate.getSelectedItem().toString() + " " + category.getSelectedItem().toString(), selMonth.getSelectedItem().toString());
             }
 
             @Override

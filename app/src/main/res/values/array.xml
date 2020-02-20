@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string-array name="ctg">
+        <item>평균 신용등급</item>
+        <item>신용자수</item>
+        <item>물건 담보물</item>
+    </string-array>
     <string-array name="months">
         <item>2019-12-01</item>
         <item>2019-09-01</item>
@@ -12,5 +17,11 @@
         <item>50</item>
         <item>60</item>
         <item>70</item>
+    </string-array>
+    <string-array name="cr">
+        <item>초우량등급</item>
+        <item>우량등급</item>
+        <item>불량등급</item>
+        <item>초불량등급</item>
     </string-array>
 </resources>
