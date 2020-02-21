@@ -45,4 +45,26 @@
         <item>금융/보험</item>
         <item>기타</item>
     </string-array>
+    <string-array name="deposit">
+        <item>요구불예금</item>
+        <item>당좌예금</item>
+        <item>가계당좌예금</item>
+        <item>보통예금</item>
+        <item>별단예금</item>
+        <item>공금예금</item>
+        <item>국고예금</item>
+        <item>여신관리자금</item>
+        <item>저축성예금</item>
+        <item>정기예금</item>
+        <item>정기적금</item>
+        <item>상호부금</item>
+        <item>주택부금</item>
+        <item>저축예금</item>
+        <item>목돈마련저축</item>
+        <item>기업자유예금</item>
+        <item>근로자장기저축</item>
+        <item>장기주택마련저축</item>
+        <item>근로자우대저축</item>
+        <item>가계장기저축</item>
+    </string-array>
 </resources>

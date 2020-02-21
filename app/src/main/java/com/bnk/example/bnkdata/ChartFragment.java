@@ -26,7 +26,7 @@ public class ChartFragment extends Fragment {
         mContext = getActivity().getApplicationContext();
         mTabLayout = view.findViewById(R.id.layout_tab);
 
-        mTabLayout.addTab(mTabLayout.newTab().setCustomView(createTabView("금융")));
+        mTabLayout.addTab(mTabLayout.newTab().setCustomView(createTabView("소비")));
         mTabLayout.addTab(mTabLayout.newTab().setCustomView(createTabView("예금")));
         mTabLayout.addTab(mTabLayout.newTab().setCustomView(createTabView("신용")));
         mTabLayout.addTab(mTabLayout.newTab().setCustomView(createTabView("경제")));
@@ -37,7 +37,6 @@ public class ChartFragment extends Fragment {
                 getActivity().getSupportFragmentManager(), mTabLayout.getTabCount());
 
         mViewPager.setAdapter(mContentPagerAdapter);
-//        mViewPager.setOffscreenPageLimit(2);    //이전 혹은 다음 페이지 1개를 미리 로딩하기.(속도)
         mViewPager.addOnPageChangeListener(
 
                 new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));

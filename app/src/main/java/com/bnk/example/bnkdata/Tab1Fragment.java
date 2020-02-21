@@ -66,6 +66,7 @@ public class Tab1Fragment extends Fragment {
     Mapping series1Mapping;
     Line series1;
     ProgressBar loading;
+    CardView dynamic;
 
 
 
@@ -83,8 +84,9 @@ public class Tab1Fragment extends Fragment {
 
         valInit(view);
         createSpinner();
+        drawSelChart(false);
         drawChart(view);
-        drawSelChart();
+
 
         return view;
     }
@@ -94,7 +96,12 @@ public class Tab1Fragment extends Fragment {
         return sec[selSector.getSelectedItemPosition()];
     }
 
-    private void drawSelChart(){
+    private void drawSelChart(boolean redraw){
+        if(redraw){
+            dynamic.removeAllViews();
+            selSectorChartView = new AnyChartView(dynamic.getContext());
+            dynamic.addView(selSectorChartView);
+        }
         APIlib.getInstance().setActiveAnyChartView(selSectorChartView);
         cartesian = AnyChart.line();
         selSectorChartView.setProgressBar(loading);
@@ -195,9 +202,9 @@ public class Tab1Fragment extends Fragment {
     private void valInit(View v){
         selSector = v.findViewById(R.id.spinner_sector);
         selSectorChartView = v.findViewById(R.id.any_chart_viewsel);
-
         loading = v.findViewById(R.id.progressBar2);
         sectors = getResources().getStringArray(R.array.sector);
+        dynamic = v.findViewById(R.id.dynamic);
     }
 
     private void createSpinner(){
@@ -207,7 +214,7 @@ public class Tab1Fragment extends Fragment {
         selSector.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                drawSelChart();
+                drawSelChart(true);
             }
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {

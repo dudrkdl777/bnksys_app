@@ -200,7 +200,7 @@ public class Tab2Fragment extends Fragment implements ImageView.OnTouchListener 
                     long c2 = (max - min);
                     long rate = c1*255l / c2*255l / 255l;
                     rate = (rate>=255) ? 255 : rate;
-                    originColor[conid] = Color.argb(new Long(rate).intValue(), 120, 22, 22);
+                    originColor[conid] = Color.argb(new Long(rate).intValue(), 40, 170, 232);
                     map[conid].setColorFilter(originColor[conid]);
                     map_itemstr[conid] = DBManager.condsts.get(conid).getNm() + " " + category.getSelectedItem().toString() + " : " + df.format(list.get(i).getCollateral()*1000)+"원";
                     double tmp = Math.floor(list.get(i).getCollateral()/100000l);
