@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -29,17 +30,26 @@ import com.anychart.charts.Cartesian;
 import com.anychart.charts.Pie;
 import com.anychart.core.cartesian.series.Bar;
 import com.anychart.core.cartesian.series.Column;
+import com.anychart.core.cartesian.series.Line;
+import com.anychart.data.Mapping;
+import com.anychart.data.Set;
 import com.anychart.enums.Anchor;
 import com.anychart.enums.HoverMode;
+import com.anychart.enums.MarkerType;
 import com.anychart.enums.Position;
 import com.anychart.enums.TooltipPositionMode;
+import com.anychart.graphics.vector.Stroke;
 import com.bnk.example.bnkdata.ChartLib.BarChart;
 import com.bnk.example.bnkdata.ChartLib.PieChart;
 import com.bnk.example.bnkdata.DB.DBManager;
 import com.bnk.example.bnkdata.Model.CrdStrModel;
 
 import java.lang.reflect.Array;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,29 +57,96 @@ import java.util.stream.Collectors;
 public class Tab1Fragment extends Fragment {
     CardView card1;
     LinearLayout fin1_layout;
+
+    Spinner selSector;
+    String[] sectors;
+    AnyChartView selSectorChartView;
+    Cartesian cartesian;
+    Set set;
+    Mapping series1Mapping;
+    Line series1;
+    ProgressBar loading;
+
+
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
+
+
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_tab1, container, false);
 
-        Spinner spinner = view.findViewById(R.id.spinenr_fin);
-//        LinearLayout layout = view.findViewById(R.id.fin_layout);
-//        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
-//                R.array.fin_catgory, android.R.layout.simple_spinner_item);
-//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        spinner.setAdapter(adapter);
-//
-//        spinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                View veiw2 = inflater.inflate(R.layout.view_fin1,container,false);
-//            }
-//        });
+        valInit(view);
+        createSpinner();
+        drawChart(view);
+        drawSelChart();
+
+        return view;
+    }
+
+    private int selSector(){
+        int[] sec = {2,8,9,12,17,18,21,24,28,32,35,36,39,40,41};
+        return sec[selSector.getSelectedItemPosition()];
+    }
+
+    private void drawSelChart(){
+        APIlib.getInstance().setActiveAnyChartView(selSectorChartView);
+        cartesian = AnyChart.line();
+        selSectorChartView.setProgressBar(loading);
+        List<CrdStrModel> list = DBManager.crdStrs.stream().filter(t->t.getSector()==selSector()).collect(Collectors.toList());
+
+        cartesian.animation(true);
+        cartesian.crosshair().enabled(true);
+        cartesian.crosshair()
+                .yLabel(true)
+                // TODO ystroke
+                .yStroke((Stroke) null, null, null, (String) null, (String) null);
+
+        cartesian.tooltip().positionMode(TooltipPositionMode.POINT);
+
+        cartesian.title(DBManager.sectors.get(selSector()).getNm() +" 월간 신용거래량");
+
+        cartesian.yAxis(0).title("(일평균) 백만원");
+        cartesian.xAxis(0).labels().padding(5d, 5d, 5d, 5d);
+
+
+        List<DataEntry> seriesData = new ArrayList<>();
+        for(int i=0;i<list.size();i++){
+            seriesData.add(new CustomDataEntry(list.get(i).getDt().substring(2,7), list.get(i).getVolume()));
+        }
+
+        set = Set.instantiate();
+        set.data(seriesData);
+        series1Mapping = set.mapAs("{ x: 'x', value: 'value' }");
+
+        series1 = cartesian.line(series1Mapping);
+        series1.name(DBManager.sectors.get(selSector()).getNm());
+        series1.hovered().markers().enabled(true);
+        series1.hovered().markers()
+                .type(MarkerType.CIRCLE)
+                .size(4d);
+        series1.tooltip()
+                .position("right")
+                .anchor(Anchor.LEFT_CENTER)
+                .offsetX(5d)
+                .offsetY(5d);
+
+        cartesian.legend().enabled(true);
+        cartesian.legend().fontSize(13d);
+        cartesian.legend().padding(0d, 0d, 10d, 0d);
+        //cartesian.autoRedraw();
+        //cartesian.draw(true);
+        //selSectorChartView.clear();
+        selSectorChartView.setChart(cartesian);
+
+    }
+
+    private void drawChart(View view){
 
         ///pie 차트
         AnyChartView anyChartView =view.findViewById(R.id.any_chart_view);
@@ -84,7 +161,7 @@ public class Tab1Fragment extends Fragment {
         Pie pie = test.makePie(cdr_list);
         anyChartView.setChart(pie);
 
-       //월별 차트
+        //월별 차트
         List<CrdStrModel> crd_list2 = DBManager.crdStrs.stream().filter(t->t.getDt().contains("2019-11-01")).collect(Collectors.toList());
 
         AnyChartView anyChartView3 =view.findViewById(R.id.any_chart_view2);
@@ -102,20 +179,6 @@ public class Tab1Fragment extends Fragment {
         card1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-//                LayoutInflater inflater2 = getLayoutInflater();
-//                View dialog = inflater2.inflate(R.layout.view_fin1, container, false);
-//                //chart그리기
-//                AnyChartView anyChartView2 =view.findViewById(R.id.dialog_chartview);
-//                APIlib.getInstance().setActiveAnyChartView(anyChartView2);
-//                BarChart bar = new BarChart();
-//                Cartesian cart = bar.makeBar();
-//                anyChartView2.setChart(cart);
-//                //취소버튼 + dialog 나타내기
-//                builder.setNegativeButton(android.R.string.cancel,null);
-//                builder.setView(dialog);
-//                builder.create().show();
-                //신용거래량을 리스트로 만들어서 보내기...
                 List<CrdStrModel> crdlist = DBManager.crdStrs.stream().filter(t->t.getSector()==1).collect(Collectors.toList());
                 ArrayList<CrdStrModel> nlist = new ArrayList<>();
                 nlist.addAll(crdlist);
@@ -127,7 +190,35 @@ public class Tab1Fragment extends Fragment {
                 startActivity(intent);
             }
         });
+    }
 
-        return view;
+    private void valInit(View v){
+        selSector = v.findViewById(R.id.spinner_sector);
+        selSectorChartView = v.findViewById(R.id.any_chart_viewsel);
+
+        loading = v.findViewById(R.id.progressBar2);
+        sectors = getResources().getStringArray(R.array.sector);
+    }
+
+    private void createSpinner(){
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.spinner_text_small, sectors);
+        adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        selSector.setAdapter(adapter);
+        selSector.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                drawSelChart();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
+        });
+    }
+
+    private class CustomDataEntry extends ValueDataEntry {
+
+        CustomDataEntry(String x, Number value) {
+            super(x, value);
+        }
     }
 }
